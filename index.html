@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vietnamese to ASCII Converter</title>
+</head>
+<body>
+  <button onclick="copyToClipboard()">Copy to Clipboard</button><br/>
+   <textarea id="inputText" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea>
+  <textarea id="output" rows="5" cols="60" readonly></textarea>
+
+  <script>
+    const vietnameseToAsciiMap = {
+      "Ă": "a1", "Â": "a2", "Ê": "a3", "Ô": "a4", "Ơ": "a5", "Ư": "a6", "Đ": "a7",
+      "ă": "a8", "â": "a9", "ê": "aa", "ô": "ab", "ơ": "ac", "ư": "ad", "đ": "ae",
+      "à": "b5", "ả": "b6", "ã": "b7", "á": "b8", "ạ": "b9", "ằ": "ba", "ẳ": "bb",
+      "ẵ": "bc", "ắ": "bd", "ặ": "c6", "ầ": "c7", "ẩ": "c8", "ẫ": "c9", "ấ": "ca",
+      "ậ": "cb", "è": "cc", "ẻ": "ce", "ẽ": "cf", "é": "d0", "ẹ": "d1", "ề": "d2",
+      "ể": "d3", "ễ": "d4", "ế": "d5", "ệ": "d6", "ì": "d7", "ỉ": "d8", "ĩ": "dc",
+      "í": "dd", "ị": "de", "ò": "df", "ỏ": "e1", "õ": "e2", "ó": "e3", "ọ": "e4",
+      "ồ": "e5", "ổ": "e6", "ỗ": "e7", "ố": "e8", "ộ": "e9", "ờ": "ea", "ở": "eb",
+      "ỡ": "ec", "ớ": "ed", "ợ": "ee", "ù": "ef", "ủ": "f1", "ũ": "f2", "ú": "f3",
+      "ụ": "f4", "ừ": "f5", "ử": "f6", "ữ": "f7", "ứ": "f8", "ự": "f9",
+      "ỳ": "fa", "ỷ": "fb", "ỹ": "fc", "ý": "fd", "ỵ": "fe", "\n": "0d 0a\n"
+    };
+
+    function convertToHex() {
+      const inputText = document.getElementById("inputText").value;
+      const outputElement = document.getElementById("output");
+      let result = '';
+
+      for (let i = 0; i < inputText.length; i++) {
+        const char = inputText[i];
+        const asciiChar = vietnameseToAsciiMap[char] || char.charCodeAt(0).toString(16);
+        result += asciiChar.toUpperCase();
+        result += ' ';
+      }
+
+      outputElement.value = result;
+    }
+    
+    function copyToClipboard() {
+      const outputText = document.getElementById("output");
+      outputText.select();
+      document.execCommand('copy');
+    }
+  </script>
+</body>
+</html>
