@@ -13,6 +13,8 @@
     <textarea id="logo" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
     <label>Nội dung:</label><br />
     <textarea id="content" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
+    <label>Nội dung cuối:</label><br />
+    <textarea id="footer" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
     <label>Mã HEX:</label><br />
     <textarea id="output" rows="40" cols="160" readonly></textarea>
 
@@ -25,15 +27,16 @@
         const header = `1F 1B 1F 84 01 01 00 00 01 20 08 12 00 
 1F 1B 1F 84 03 00 00 00
 `
-        const footer = `0D 0A
+        const footer1 = `0D 0A
 1D 21 66
 40 63 6E 74    
 1B 4A FF 0A
-1D 21 00 1B 21 20
+1D 21 00 
+1B 21 20
 40 64 61 74 65 
 0D 0A
-43 61 6D 20 6F 6E 20 71 75 79 20 6B 68 61 63 68 21
-1B 4A FF
+`
+        const footer2 = `1B 4A FF
 1B 4A 30
 1D 56 00
 40 65 6E 64`;
@@ -44,11 +47,12 @@
             return inputString;
         }
         function convertToHex() {
-            var date = new Date(document.getElementById("dateInput").value);
-            var logo = document.getElementById("logo").value;
-            var content = document.getElementById("content").value;
+            let date = new Date(document.getElementById("dateInput").value);
+            let logo = document.getElementById("logo").value;
+            let content = document.getElementById("content").value;
+            let footer = document.getElementById("footer").value;
             const outputElement = document.getElementById("output");
-            let result = '';
+            let result = header;
 
             if (date) {
                 result += '1F 1B 1F 84 04 01 ';
@@ -60,7 +64,8 @@
             }
 
             result += `1F 1B 1F 84 02
-1B 40 1B 21 08 1B 61 01
+1B 40 1B 21 08 
+1B 61 01
 `;
 
             if (logo) {
@@ -85,12 +90,24 @@
                 const char = content[i];
                 const asciiChar = vietnameseToAsciiMap[char] || char.charCodeAt(0).toString(16);
                 result += asciiChar.toUpperCase();
-                    if (!(asciiChar === vietnameseToAsciiMap["\n"])) {
-                        result += ' '
-                    }
+                if (!(asciiChar === vietnameseToAsciiMap["\n"])) {
+                    result += ' '
+                }
             }
 
-            outputElement.value = header + result + footer;
+            result += footer1;
+
+            footer = ensureNewlineAtEnd(footer);
+            for (let i = 0; i < footer.length; i++) {
+                const char = footer[i];
+                const asciiChar = vietnameseToAsciiMap[char] || char.charCodeAt(0).toString(16);
+                result += asciiChar.toUpperCase();
+                if (!(asciiChar === vietnameseToAsciiMap["\n"])) {
+                    result += ' '
+                }
+            }
+            result += footer2;
+            outputElement.value = result;
         }
 
         function copyToClipboard() {
