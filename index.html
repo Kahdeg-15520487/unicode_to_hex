@@ -11,9 +11,11 @@
     <input type="date" id="dateInput"><br />
     <label>Tiêu đề:</label><br />
     <textarea id="logo" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
-    <label>Nội dung:</label><br />
+    <label>Nội dung (ở trên số thứ tự):</label><br />
     <textarea id="content" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
-    <label>Nội dung cuối:</label><br />
+    <label>Nội dung 2 (ở giữa số thứ tự và ngày):</label><br />
+    <textarea id="prefooter" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
+    <label>Nội dung cuối (ở sau ngày):</label><br />
     <textarea id="footer" rows="5" cols="60" placeholder="Enter text" oninput="convertToHex()"></textarea><br />
     <label>Mã HEX:</label><br />
     <textarea id="output" rows="40" cols="160" readonly></textarea>
@@ -28,15 +30,18 @@
 1F 1B 1F 84 01 01 00 00 01 20 08 12 00 
 1F 1B 1F 84 03 00 00 00
 `
-        const footer1 = `0D 0A
+//in số thứ tứ
+        const sothutu = `0D 0A
 1D 21 66
 40 63 6E 74    
 1B 4A FF 0A
 1D 21 00 
 1B 21 20
-40 64 61 74 65 
+`
+        const songay = `40 64 61 74 65 
 0D 0A
 `
+//kết thúc lệnh
         const footer2 = `1B 4A FF
 1B 4A 30
 1D 56 00
@@ -51,6 +56,7 @@
             let date = new Date(document.getElementById("dateInput").value);
             let logo = document.getElementById("logo").value;
             let content = document.getElementById("content").value;
+            let prefooter = document.getElementById("prefooter").value;
             let footer = document.getElementById("footer").value;
             const outputElement = document.getElementById("output");
             let result = header;
@@ -96,7 +102,19 @@
                 }
             }
 
-            result += footer1;
+            result += sothutu;
+
+            prefooter = ensureNewlineAtEnd(prefooter);
+            for (let i = 0; i < prefooter.length; i++) {
+                const char = prefooter[i];
+                const asciiChar = vietnameseToAsciiMap[char] || char.charCodeAt(0).toString(16);
+                result += asciiChar.toUpperCase();
+                if (!(asciiChar === vietnameseToAsciiMap["\n"])) {
+                    result += ' '
+                }
+            }
+
+            result += songay;
 
             footer = ensureNewlineAtEnd(footer);
             for (let i = 0; i < footer.length; i++) {
